@@ -12,9 +12,11 @@ var mathGen = {
    
       return exam
    },
+   // add more functions. LMAO ASSHOLE
    genQuadraticEquations(){
       console.log(`hahaha`)
-   }
+   },
+
 }
 
 export default mathGen

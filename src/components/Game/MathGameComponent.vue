@@ -14,20 +14,25 @@ onMounted(()=>{
    document.title = localStorage.difficult
 
    if(localStorage.already == null || localStorage.already == false){
-      return startGame(localStorage.difficult)
+      startGame(localStorage.difficult)
    }
-
-   score.value = JSON.parse(localStorage.score)
-   level.value = JSON.parse(localStorage.level)
-   exams.value = JSON.parse(localStorage.exams)
-   quest.value = exams.value[level.value-1][0]
+   else{
+      score.value = JSON.parse(localStorage.score)
+      level.value = JSON.parse(localStorage.level)
+      exams.value = JSON.parse(localStorage.exams)
+      quest.value = exams.value[level.value-1][0]
+   }
 })
 
 function startGame(hard){
    localStorage.already = true
 
-   localStorage.score = 0
-   localStorage.level = 1
+   score.value = 0
+   level.value = 1
+
+   localStorage.score = JSON.stringify(score.value)
+   localStorage.level = JSON.stringify(level.value)
+   
    genExams(hard)
 }
 
@@ -53,23 +58,26 @@ function genExams(hard){
    }
 
    localStorage.exams = JSON.stringify(exams.value)
-   quest.value = exams.value[level.value-1][0]
 }
 
-// сделать review
 function handleAnswer(){
    if(userAnswer.value == exams.value[level.value-1][1]){
+      //временно 
       console.log(true)
 
-      score.value++
-      localStorage.score = JSON.stringify(score.value)
+      localStorage.score = JSON.stringify(++score.value)
    }
+
    if(level.value + 1 > 6){
+      //временно 
       console.log(`stop`)
+      localStorage.clear()
+      location.reload()
+      
       return 0
    }
 
-   level.value++
+   localStorage.level = JSON.stringify(++level.value)
    userAnswer.value = null
    quest.value = exams.value[level.value-1][0]
 }
