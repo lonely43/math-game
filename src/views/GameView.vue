@@ -1,9 +1,6 @@
 <script setup>
-   import GameComponent from '../components/Game/GameComponent.vue'
+   import GameComponent from '../components/GameComponent.vue'
 </script>
 <template>
    <GameComponent />
 </template>
-<style lang="scss" scoped>
-
-</style>

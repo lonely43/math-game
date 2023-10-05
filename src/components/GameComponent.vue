@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted, ref } from 'vue';
-import ModalComponent from './ModalComponent.vue'
-import MathGameComponent from './MathGameComponent.vue'
+import ModalComponent from './Game/ModalComponent.vue'
+import MathGameComponent from './Game/MathGameComponent.vue'
 
 const gameActive = ref()
 const modal = ref()
@@ -14,7 +14,7 @@ onMounted(()=>{
 function closeModal(){
    setTimeout(()=>{
       localStorage.action = true
-      gameActive.value = true
+      gameActive.value = localStorage.action
    }, 600)
 
       // transitoin 

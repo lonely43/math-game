@@ -9,7 +9,6 @@ onMounted(()=>{
 
 function handle(hard){
    localStorage.difficult = hard
-
    emit('close')
 }
 </script>

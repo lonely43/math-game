@@ -1,9 +1,9 @@
 <script async setup>
 import { onMounted, ref } from 'vue';
+import mathGen from './gameFunctions';
 
-const hard = ref(0)
 const score = ref(0)
-const level = ref(1)
+const level = ref(0)
 
 const exams = ref([])
 const quest = ref(0)
@@ -11,21 +11,21 @@ const quest = ref(0)
 const userAnswer = ref()
 
 onMounted(()=>{
-   // переписать нахуй все
-   hard.value = localStorage.difficult
-   document.title = hard.value
-   
-   score.value = (localStorage.score == null) ? 0 : localStorage.score
-   level.value = (localStorage.level > 1) ? localStorage.level : 1
+   document.title = localStorage.difficult
 
-   // поменять в будущем 
-   if(localStorage.action){
-      startGame(hard.value)
+   if(localStorage.already == null || localStorage.already == false){
+      return startGame(localStorage.difficult)
    }
+
+   score.value = JSON.parse(localStorage.score)
+   level.value = JSON.parse(localStorage.level)
+   exams.value = JSON.parse(localStorage.exams)
+   quest.value = exams.value[level.value-1][0]
 })
 
 function startGame(hard){
-   // переписать
+   localStorage.already = true
+
    localStorage.score = 0
    localStorage.level = 1
    genExams(hard)
@@ -34,48 +34,35 @@ function startGame(hard){
 function genExams(hard){
    if(hard == "Easy"){
       for(let i = 0;i < 6; i++){
-         let exam = genOneSignExam()
+         let exam = mathGen.genOneSignExam()
          exams.value.push([exam.question, exam.answer])
       }
    }
    if(hard == "Medium"){
       for(let i = 0;i < 6; i++){
-         let exam = genOneSignExam()
+         let exam = mathGen.genOneSignExam()
+         mathGen.genQuadraticEquations()
          exams.value.push([exam.question, exam.answer])
       }
    }
    if(hard == "Hard"){
       for(let i = 0;i < 6; i++){
-         let exam = genOneSignExam()
+         let exam = mathGen.genOneSignExam()
          exams.value.push([exam.question, exam.answer])
       }
    }
-   // хз насчет этой хуйни
+
+   localStorage.exams = JSON.stringify(exams.value)
    quest.value = exams.value[level.value-1][0]
 }
 
-
-// перенести это в отдельный файл
-function genOneSignExam(){
-   const chars = `+-/*%`
-   let exam = {}
-
-   const a = Math.floor(Math.random() * 1000)
-   const sign = chars[Math.floor(Math.random() * chars.length)]
-   const b = Math.floor(Math.random() * 1000)
-
-   exam.question = `${a} ${sign} ${b}`
-   exam.answer = Number(eval(exam.question).toFixed(2))
-
-   return exam
-}
-
 // сделать review
-function checkAnswer(){
+function handleAnswer(){
    if(userAnswer.value == exams.value[level.value-1][1]){
       console.log(true)
 
       score.value++
+      localStorage.score = JSON.stringify(score.value)
    }
    if(level.value + 1 > 6){
       console.log(`stop`)
@@ -99,9 +86,9 @@ function checkAnswer(){
          <h1> {{ quest }} ? </h1>
       </div>
       <div class="answer">
-         <!-- в input добавть @key-up.enter ивент -->
+         <!-- в input добавть @key-up.enter ивент   p.s optional -->
          <input type="text" v-model="userAnswer" placeholder="Enter ur answer">
-         <button @click="checkAnswer"> Submit </button>
+         <button @click="handleAnswer"> Submit </button>
       </div>
    </div>
 </main>
