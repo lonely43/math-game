@@ -86,7 +86,7 @@ function handleAnswer(){
          <h1> {{ quest }} ? </h1>
       </div>
       <div class="answer">
-         <!-- в input добавть @key-up.enter ивент   p.s optional -->
+         <!-- в input добавть @key-up.enter ивент    p.s optional -->
          <input type="text" v-model="userAnswer" placeholder="Enter ur answer">
          <button @click="handleAnswer"> Submit </button>
       </div>
