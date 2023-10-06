@@ -73,7 +73,7 @@ function handleAnswer(){
       console.log(`stop`)
       localStorage.clear()
       location.reload()
-      
+
       return 0
    }
 
