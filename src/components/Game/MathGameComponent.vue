@@ -45,8 +45,8 @@ function genExams(hard){
    }
    if(hard == "Medium"){
       for(let i = 0;i < 6; i++){
-         let exam = mathGen.genOneSignExam()
-         mathGen.genQuadraticEquations()
+         //let exam = mathGen.genOneSignExam()
+         let exam = mathGen.genQuadraticEquations()
          exams.value.push([exam.question, exam.answer])
       }
    }
