@@ -25,7 +25,7 @@ function closeModal(){
 
 <template>
    <template v-if="gameActive">
-      <main>
+      <main class="main">
          <div ref="game" class="modal">
             <MathGameComponent />
          </div>
@@ -33,7 +33,7 @@ function closeModal(){
    </template>
 
    <template v-else>
-      <main>
+      <main class="main">
          <div ref="modal" class="modal">
             <ModalComponent @close="closeModal" ref="modal" />
          </div>
@@ -44,7 +44,7 @@ function closeModal(){
 
 <style lang="scss" scoped>
 
-main{
+.main{
    display: flex;
    flex-direction: column;
    justify-content: center;

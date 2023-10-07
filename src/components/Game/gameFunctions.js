@@ -28,8 +28,8 @@ var mathGen = {
       let a = createСoefficient()
       let b = createСoefficient()
       let c = createСoefficient()
-   
-      a = (a.sign == `+`) ? a.value : Number(a.sign + a.value)
+
+      a = Number(a.sign + a.value)
    
       exam.question = `${a}x²${b.sign + b.value}x${c.sign + c.value}`
    
@@ -53,7 +53,6 @@ var mathGen = {
    
       return exam
    },
-
 }
 
 export default mathGen
