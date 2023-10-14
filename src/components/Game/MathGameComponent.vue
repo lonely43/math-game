@@ -3,12 +3,16 @@ import { onMounted, ref } from 'vue';
 import mathGen from './gameFunctions';
 
 const score = ref(0)
-const level = ref(0)
+const level = ref(1)
 
 const exams = ref([])
 const quest = ref(0)
 
 const userAnswer = ref()
+
+
+const resultofAnswerModal = ref()
+const FAQ = ref()
 
 onMounted(()=>{
    document.title = localStorage.difficult
@@ -17,6 +21,7 @@ onMounted(()=>{
       startGame(localStorage.difficult)
    }
    else{
+      // мб в функцию
       score.value = JSON.parse(localStorage.score)
       level.value = JSON.parse(localStorage.level)
       exams.value = JSON.parse(localStorage.exams)
@@ -26,10 +31,6 @@ onMounted(()=>{
 
 function startGame(hard){
    localStorage.already = true
-
-   score.value = 0
-   level.value = 1
-
    localStorage.score = JSON.stringify(score.value)
    localStorage.level = JSON.stringify(level.value)
    
@@ -46,14 +47,19 @@ function genExams(hard){
    }
    if(hard == "Medium"){
       for(let i = 0;i < 6; i++){
-         //let exam = mathGen.genOneSignExam()
-         let exam = mathGen.genQuadraticEquations()
+         let exam
+         if(Math.floor(Math.random()*2) == 0){
+            exam = mathGen.genOneSignExam()
+         }
+         else{
+            exam = mathGen.genQuadraticEquations(20)
+         }
          exams.value.push([exam.question, exam.answer])
       }
    }
    if(hard == "Hard"){
       for(let i = 0;i < 6; i++){
-         let exam = mathGen.genOneSignExam()
+         let exam = mathGen.genOneSignExam(50)
          exams.value.push([exam.question, exam.answer])
       }
    }
@@ -61,7 +67,6 @@ function genExams(hard){
    localStorage.exams = JSON.stringify(exams.value)
 }
 
-const resultofAnswerModal = ref()
 function submitAnswer(){
    function showAnswerModal(mode){
       function setStyles(color, text){
@@ -81,7 +86,7 @@ function submitAnswer(){
       },1500)
    }
 
-   if(userAnswer.value == 1){ //exams.value[level.value-1][1]
+   if(userAnswer.value == exams.value[level.value-1][1]){
       showAnswerModal(`yes`)
 
       localStorage.score = JSON.stringify(++score.value)
@@ -110,6 +115,7 @@ function submitAnswer(){
    <div class="resultOfAnswer" ref="resultofAnswerModal">
       <h1> You right </h1>
    </div>
+
    <div class="level">
       <h1> {{ level }} / 6</h1>
    </div>

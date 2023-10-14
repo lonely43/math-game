@@ -13,11 +13,11 @@ var mathGen = {
    
       return exam
    },
-   genQuadraticEquations(){
+   genQuadraticEquations(max){
       const chars = `+-`
       function createСoefficient(){
          let num = {
-            value: Math.floor(Math.random() * 1000), 
+            value: Math.floor(Math.random() * max), 
             sign: chars[Math.floor(Math.random() * chars.length)]
          }
          return num
@@ -36,7 +36,7 @@ var mathGen = {
       b = Number(b.sign+b.value)
       c = Number(c.sign+c.value)
    
-      let D = b**2-4*a*c
+      let D = (b**2-4*a*c).toFixed(0)
    
       if(D > 0){
          let x1 = (-b+Math.sqrt(D))/2*a
