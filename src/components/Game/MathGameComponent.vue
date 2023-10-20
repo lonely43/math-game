@@ -1,6 +1,16 @@
 <script async setup>
+// vue's things
 import { onMounted, ref } from 'vue';
+import { useRouter } from 'vue-router';
+
+// library
 import mathGen from './gameFunctions';
+
+// components
+import FAQmodalComponent from './FAQmodalComponent.vue';
+import FailRightComponent from './FailRightComponent.vue';
+
+const router = useRouter()
 
 const score = ref(0)
 const level = ref(1)
@@ -10,9 +20,10 @@ const quest = ref(0)
 
 const userAnswer = ref()
 
+const resultofAnswer = ref(false)
+const resultofAnswerText = ref()
 
-const resultofAnswerModal = ref()
-const FAQ = ref()
+const FAQopen = ref(false)
 
 onMounted(()=>{
    document.title = localStorage.difficult
@@ -41,7 +52,7 @@ function startGame(hard){
 function genExams(hard){
    if(hard == "Easy"){
       for(let i = 0;i < 6; i++){
-         let exam = mathGen.genOneSignExam()
+         let exam = mathGen.genOneSignExam(60)
          exams.value.push([exam.question, exam.answer])
       }
    }
@@ -49,7 +60,7 @@ function genExams(hard){
       for(let i = 0;i < 6; i++){
          let exam
          if(Math.floor(Math.random()*2) == 0){
-            exam = mathGen.genOneSignExam()
+            exam = mathGen.genOneSignExam(200)
          }
          else{
             exam = mathGen.genQuadraticEquations(20)
@@ -59,7 +70,7 @@ function genExams(hard){
    }
    if(hard == "Hard"){
       for(let i = 0;i < 6; i++){
-         let exam = mathGen.genOneSignExam(50)
+         let exam = mathGen.genOneSignExam(600)
          exams.value.push([exam.question, exam.answer])
       }
    }
@@ -68,38 +79,17 @@ function genExams(hard){
 }
 
 function submitAnswer(){
-   function showAnswerModal(mode){
-      function setStyles(color, text){
-         resultofAnswerModal.value.style.backgroundColor = color
-         resultofAnswerModal.value.childNodes[0].innerText = text
-      }
-
-      if(mode == `yes`){
-         setStyles(`var(--color-green)`, `You right`)
-      }
-      else{
-         setStyles(`var(--color-red)`, `You failed`)
-      }
-      resultofAnswerModal.value.style.transform = `translateY(0rem)`
-      setTimeout(()=>{
-         resultofAnswerModal.value.style.transform = `translateY(-6rem)`
-      },1500)
-   }
-
    if(userAnswer.value == exams.value[level.value-1][1]){
-      showAnswerModal(`yes`)
 
       localStorage.score = JSON.stringify(++score.value)
+      FailRightModal(`You right!`, `rgb(88, 137, 70)`)
    }
    else{
-      showAnswerModal()
+      FailRightModal(`You failed`, `#FF7043`)
    }
 
    if(level.value + 1 > 6){
-      //временно 
-
-      localStorage.clear()
-      location.reload()
+      reset()
 
       return 0
    }
@@ -108,13 +98,35 @@ function submitAnswer(){
    userAnswer.value = null
    quest.value = exams.value[level.value-1][0]
 }
+
+function reset(){
+   localStorage.clear()
+   router.push(`/`)
+}
+
+function FailRightModal(text, backgroundColor){
+   let root = document.documentElement;
+   root.style.setProperty('--FailRightComp', backgroundColor)
+   resultofAnswerText.value = text
+   
+   resultofAnswer.value = !resultofAnswer.value
+}
 </script>
 
 <template>
 <main>
-   <div class="resultOfAnswer" ref="resultofAnswerModal">
-      <h1> You right </h1>
+   <Transition name="FAQmodal">
+      <FAQmodalComponent v-if="FAQopen" />
+   </Transition>
+   <div class="FAQbtn">
+      <button @click="FAQopen = !FAQopen"> ? </button>
    </div>
+
+   <Transition name="FailRightLine">
+      <FailRightComponent @close="()=>{resultofAnswer = !resultofAnswer}" v-if="resultofAnswer">
+         {{ resultofAnswerText }}
+      </FailRightComponent>
+   </Transition>
 
    <div class="level">
       <h1> {{ level }} / 6</h1>
@@ -126,12 +138,16 @@ function submitAnswer(){
       <div class="answer">
          <input type="text" v-model="userAnswer" placeholder="Enter your answer">
          <button @click="submitAnswer"> Submit </button>
+         <p style="cursor: pointer; font-size: 1.25em;" @click="reset"> reset </p>
       </div>
    </div>
 </main>
 </template>
 
 <style lang='scss' scoped>
+:root{
+   --FailRightComp: var(--color-background)
+}
 main{
    position: relative;
 
@@ -142,21 +158,40 @@ main{
    justify-content: center;
    align-items: center;
 }
-.resultOfAnswer{
+.FAQmodal-enter-active, .FAQmodal-leave-active{
+   transition: 0.5s opacity;
+}
+.FAQmodal-enter-from, .FAQmodal-leave-to{
+   opacity: 0;
+}
+
+.FailRightLine-enter-active, .FailRightLine-leave-active{
+   transition: 0.5s;
+}
+.FailRightLine-enter-from, .FailRightLine-leave-to{
+   transform: translateY(-6rem);
+}
+
+.FAQbtn{
    position: absolute;
-   top: 0;
+   top: 2rem;
 
-   padding: 0.2rem 0;
+   button{
+      width: 44px;
+      height: 44px;
 
-   min-width: 100vw;
+      padding: 0rem;
 
-   background-color: var(--color-green);
-   color: var(--color-background);
-   font-size: 1em;
-   letter-spacing: 4px;
+      font-size: 1.64em;
+      color: var(--color-background);
 
-   transform: translateY(-10rem);
-   transition: 0.4s transform;
+      border: none;
+      border-radius: 100%;
+
+      background-color: var(--color-green);
+
+      cursor: pointer;
+   }
 }
 .level{
    position: relative;
@@ -175,7 +210,7 @@ main{
    }
 }
 .game{
-   width: 20rem;
+   min-width: 20rem;
    display: flex;
    flex-direction: column;
    gap: 2rem;

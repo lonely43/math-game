@@ -1,16 +1,22 @@
-const chars = `+-/*%`
-
 var mathGen = {
-   genOneSignExam(){
+   genOneSignExam(max){
+      const chars = `+-/*`
+
       let exam = {}
    
-      const a = Math.floor(Math.random() * 1000)
+      const a = Math.floor(Math.random() * max)
+      const b = Math.floor(Math.random() * max)
       const sign = chars[Math.floor(Math.random() * chars.length)]
-      const b = Math.floor(Math.random() * 1000)
-   
-      exam.question = `${a} ${sign} ${b}`
-      exam.answer = Number(eval(exam.question).toFixed(2))
-   
+      
+      if(sign === `/`){
+         const c = a * b
+         exam.question = `${c} ${sign} ${a}`
+         exam.answer = Number(b)
+      }
+      else{
+         exam.question = `${a} ${sign} ${b}`
+         exam.answer = Number(eval(exam.question).toFixed(0))
+      }   
       return exam
    },
    genQuadraticEquations(max){
@@ -48,7 +54,7 @@ var mathGen = {
          exam.answer = x.toFixed(2)
       }
       if(D < 0){
-         exam.answer = `0`
+         exam.answer = 0
       }
    
       return exam

@@ -24,21 +24,19 @@ function closeModal(){
 
 
 <template>
+   <main class="main">
    <template v-if="gameActive">
-      <main class="main">
-         <div ref="game" class="modal">
-            <MathGameComponent />
-         </div>
-      </main>
+      <div ref="game" class="modal">
+         <MathGameComponent />
+      </div>
    </template>
 
    <template v-else>
-      <main class="main">
-         <div ref="modal" class="modal">
-            <ModalComponent @close="closeModal" ref="modal" />
-         </div>
-      </main>
+      <div ref="modal" class="modal">
+         <ModalComponent @close="closeModal" ref="modal" />
+      </div>
    </template>
+   </main>
 </template>
 
 
