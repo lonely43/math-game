@@ -1,18 +1,19 @@
 <script async setup>
 // vue's things
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, useAttrs } from 'vue';
 import { useRouter } from 'vue-router';
 
 // library
 import mathGen from './gameFunctions';
 
 // components
-import FAQmodalComponent from './FAQmodalComponent.vue';
+import EndGameModalComponent from './EndGameModalComponent.vue';
 import FailRightComponent from './FailRightComponent.vue';
 
 const router = useRouter()
 
 const score = ref(0)
+
 const level = ref(1)
 
 const exams = ref([])
@@ -20,10 +21,7 @@ const quest = ref(0)
 
 const userAnswer = ref()
 
-const resultofAnswer = ref(false)
-const resultofAnswerText = ref()
-
-const FAQopen = ref(false)
+const endGame = ref(false)
 
 onMounted(()=>{
    document.title = localStorage.difficult
@@ -60,7 +58,7 @@ function genExams(hard){
       for(let i = 0;i < 6; i++){
          let exam
          if(Math.floor(Math.random()*2) == 0){
-            exam = mathGen.genOneSignExam(200)
+            exam = mathGen.genOneSignExam(100)
          }
          else{
             exam = mathGen.genQuadraticEquations(20)
@@ -70,7 +68,7 @@ function genExams(hard){
    }
    if(hard == "Hard"){
       for(let i = 0;i < 6; i++){
-         let exam = mathGen.genOneSignExam(600)
+         let exam = mathGen.genOneSignExam(150)
          exams.value.push([exam.question, exam.answer])
       }
    }
@@ -89,7 +87,9 @@ function submitAnswer(){
    }
 
    if(level.value + 1 > 6){
-      reset()
+      endGame.value = true
+
+      //reset()
 
       return 0
    }
@@ -104,6 +104,9 @@ function reset(){
    router.push(`/`)
 }
 
+const resultofAnswer = ref(false)
+const resultofAnswerText = ref()
+
 function FailRightModal(text, backgroundColor){
    let root = document.documentElement;
    root.style.setProperty('--FailRightComp', backgroundColor)
@@ -115,12 +118,11 @@ function FailRightModal(text, backgroundColor){
 
 <template>
 <main>
-   <Transition name="FAQmodal">
-      <FAQmodalComponent v-if="FAQopen" />
+   <Transition name="EndGameModal">
+      <EndGameModalComponent v-if="endGame">
+         {{ score }}
+      </EndGameModalComponent>
    </Transition>
-   <div class="FAQbtn">
-      <button @click="FAQopen = !FAQopen"> ? </button>
-   </div>
 
    <Transition name="FailRightLine">
       <FailRightComponent @close="()=>{resultofAnswer = !resultofAnswer}" v-if="resultofAnswer">
@@ -136,7 +138,7 @@ function FailRightModal(text, backgroundColor){
          <h1> {{ quest }} </h1>
       </div>
       <div class="answer">
-         <input type="text" v-model="userAnswer" placeholder="Enter your answer">
+         <input v-model="userAnswer" @keypress="isLegalChar" placeholder="Enter your answer">
          <button @click="submitAnswer"> Submit </button>
          <p style="cursor: pointer; font-size: 1.25em;" @click="reset"> reset </p>
       </div>
@@ -158,10 +160,10 @@ main{
    justify-content: center;
    align-items: center;
 }
-.FAQmodal-enter-active, .FAQmodal-leave-active{
-   transition: 0.5s opacity;
+.EndGameModal-enter-active, .EndGameModal-leave-active{
+   transition: 1s;
 }
-.FAQmodal-enter-from, .FAQmodal-leave-to{
+.EndGameModal-enter-from, .EndGameModal-leave-to{
    opacity: 0;
 }
 
@@ -174,7 +176,7 @@ main{
 
 .FAQbtn{
    position: absolute;
-   top: 2rem;
+   bottom: 2rem;
 
    button{
       width: 44px;

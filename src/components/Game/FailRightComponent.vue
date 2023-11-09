@@ -17,6 +17,7 @@ const emit = defineEmits(['close'])
 <style lang="scss" scoped>
 .resultOfAnswer{
    position: absolute;
+   z-index: 4;
    top: 0;
 
    padding: 0.2rem 0;

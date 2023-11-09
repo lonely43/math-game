@@ -7,7 +7,11 @@ const router = useRouter()
 
 onMounted(()=>{
   document.title = 'Main menu'
+  setTimeout(() => {
+    menu.value.style.opacity = 1
+  }, 600)
 })
+
 const menu = ref()
 
 function handle(){
@@ -32,7 +36,9 @@ function handle(){
 </template>
 
 <style lang="scss" scoped>
+
 main{
+  opacity: 0;
   min-height: 100dvh;
 
   display: flex;
